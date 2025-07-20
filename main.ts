@@ -3,11 +3,15 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 // Remember to rename these classes and interfaces!
 
 interface MyPluginSettings {
+	assetsDir: string;
 	mySetting: string;
+	extensions: string[];
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+	assetsDir: '',
+	mySetting: 'default',
+	extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'],
 }
 
 export default class MyPlugin extends Plugin {
@@ -130,5 +134,35 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.settings.mySetting = value;
 					await this.plugin.saveSettings();
 				}));
+		
+		new Setting(containerEl)
+			.setName('Assets Directory')
+			.setDesc('The relative path to the assets directory (e.g., "assets" or "images"). All images will be moved to this directory when tidying up.')
+			.addText(text => text
+				.setPlaceholder('Enter your path')
+				.setValue(this.plugin.settings.assetsDir)
+				.onChange(async (value) => {
+					this.plugin.settings.assetsDir = value;
+					await this.plugin.saveSettings();
+				}));
+		
+		new Setting(containerEl)
+			.setName('Extensions')
+			.setDesc('The file extensions to consider as images when tidying up.')
+			.addText(text => text
+				.setPlaceholder('Enter extensions (comma-separated)')
+        .setValue(this.plugin.settings.extensions.join(', '))
+        .onChange(async (value) => {
+          // Split the input by commas and trim whitespace
+          const extensions = value.split(',').map(ext => ext.trim());
+          // Filter out empty strings
+          this.plugin.settings.extensions = extensions.filter(ext => ext.length > 0);
+          await this.plugin.saveSettings();
+				}));
+    
+    // // Add header
+    // containerEl.createEl('h2', { text: 'Image Tidying' });
+    // // Add horizontal rule
+    // containerEl.createEl('hr');
 	}
 }
