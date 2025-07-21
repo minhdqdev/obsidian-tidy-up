@@ -1,5 +1,11 @@
+# VSCode settings
 .vscode/
 
+# Javascript/TypeScript
 node_modules/
 
+# Data
+data.json
+
+# Miscellaneous
 tags

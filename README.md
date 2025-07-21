@@ -1,4 +1,4 @@
-# Obsidian Sample Plugin
+# Obsidian Plugin: Tidy Up 
 
 This is a sample plugin for Obsidian (https://obsidian.md).
 
@@ -82,7 +82,7 @@ If you have multiple URLs, you can also do:
 ```json
 {
     "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
+        "Buy Me a Coffee": "https://buymeacoffee.com/minhdq99hp",
         "GitHub Sponsor": "https://github.com/sponsors",
         "Patreon": "https://www.patreon.com/"
     }
