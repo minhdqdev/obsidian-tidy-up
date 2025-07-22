@@ -1,20 +1,7 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { PluginSettings, DEFAULT_SETTINGS, SettingTab } from './settings';
+import { tidyUp } from './service';
 
-interface PluginSettings {
-	assetsDir: string;
-	mySetting: string;
-	imageExtensions: string[];
-	shouldRemoveEmptyNotes: boolean;
-	shouldRemoveUnlinkedImages: boolean;
-}
-
-const DEFAULT_SETTINGS: PluginSettings = {
-	assetsDir: '',
-	mySetting: 'default',
-	imageExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'],
-	shouldRemoveEmptyNotes: false,
-	shouldRemoveUnlinkedImages: false,
-}
 
 export default class MyPlugin extends Plugin {
 	settings: PluginSettings;
@@ -23,9 +10,9 @@ export default class MyPlugin extends Plugin {
 		await this.loadSettings();
 
 		// This creates an icon in the left ribbon.
-		const ribbonIconEl = this.addRibbonIcon('paintbrush', 'Tidy up', (evt: MouseEvent) => {
+		const ribbonIconEl = this.addRibbonIcon('paintbrush', 'Tidy up', async (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
+			await tidyUp(this.app, this.settings);
 		});
 		// Perform additional things with the ribbon
 		ribbonIconEl.addClass('my-plugin-ribbon-class');
@@ -39,10 +26,10 @@ export default class MyPlugin extends Plugin {
 			name: 'Tidy up',
 			callback: () => {
 				// Your tidying up logic goes here
-				const assetsDir = this.settings.assetsDir;
+				const assetsDirectory = this.settings.assetsDirectory;
 				const imageExtensions = this.settings.imageExtensions;
 
-				if (!assetsDir) {
+				if (!assetsDirectory) {
 					new Notice('Please set the assets directory in the plugin settings.');
 					return;
 				}
@@ -53,7 +40,7 @@ export default class MyPlugin extends Plugin {
 				}
 
 				// Example logic: Just show a notice for now
-				new Notice(`Moved images to "${assetsDir}" with imageExtensions: ${imageExtensions.join(', ')}`);
+				new Notice(`Moved images to "${assetsDirectory}" with imageExtensions: ${imageExtensions.join(', ')}`);
 			}
 		})
 
@@ -133,85 +120,5 @@ class SampleModal extends Modal {
 	onClose() {
 		const {contentEl} = this;
 		contentEl.empty();
-	}
-}
-
-class SettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
-
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const {containerEl} = this;
-
-		containerEl.empty();
-
-		// new Setting(containerEl)
-		// 	.setName('Setting #1')
-		// 	.setDesc('It\'s a secret')
-		// 	.addText(text => text
-		// 		.setPlaceholder('Enter your secret')
-		// 		.setValue(this.plugin.settings.mySetting)
-		// 		.onChange(async (value) => {
-		// 			this.plugin.settings.mySetting = value;
-		// 			await this.plugin.saveSettings();
-		// 		}));
-
-		containerEl.createEl('h2', { text: 'Tidying up' });
-
-		new Setting(containerEl)
-			.setName('Remove Empty Notes')
-			.setDesc('Enable to remove empty notes when tidying up.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.shouldRemoveEmptyNotes)
-				.onChange(async (value) => {
-					this.plugin.settings.shouldRemoveEmptyNotes = value;
-					await this.plugin.saveSettings();
-				}));
-		
-		new Setting(containerEl)
-			.setName('Remove Unlinked Images')
-			.setDesc('Enable to remove unlinked images when tidying up.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.shouldRemoveUnlinkedImages)
-				.onChange(async (value) => {
-					this.plugin.settings.shouldRemoveUnlinkedImages = value;
-					await this.plugin.saveSettings();
-				}));
-		
-		new Setting(containerEl)
-			.setName('Assets Directory')
-			.setDesc('The relative path to the assets directory (e.g., "assets" or "images"). All images will be moved to this directory when tidying up.')
-			.addText(text => text
-				.setPlaceholder('Enter your path')
-				.setValue(this.plugin.settings.assetsDir)
-				.onChange(async (value) => {
-					this.plugin.settings.assetsDir = value;
-					await this.plugin.saveSettings();
-				}));
-		
-		new Setting(containerEl)
-			.setName('imageExtensions')
-			.setDesc('The file imageExtensions to consider as images when tidying up.')
-			.addText(text => text
-				.setPlaceholder('Enter imageExtensions (comma-separated)')
-        .setValue(this.plugin.settings.imageExtensions.join(', '))
-        .onChange(async (value) => {
-          // Split the input by commas and trim whitespace
-          const imageExtensions = value.split(',').map(ext => ext.trim());
-          // Filter out empty strings
-          this.plugin.settings.imageExtensions = imageExtensions.filter(ext => ext.length > 0);
-          await this.plugin.saveSettings();
-				}));
-
-		containerEl.createEl('hr');
-    
-    // // Add header
-    // containerEl.createEl('h2', { text: 'Image Tidying' });
-    // // Add horizontal rule
-    // containerEl.createEl('hr');
 	}
 }
