@@ -1,0 +1,11 @@
+{
+	"id": "obsidian-tidy-up",
+	"name": "Tidy Up",
+	"version": "0.1.0",
+	"minAppVersion": "0.15.0",
+	"description": "An Obsidian plugin to tidy up your vault",
+	"author": "minhdqdev",
+	"authorUrl": "https://minhdq.dev",
+	"fundingUrl": "https://buymeacoffee.com/minhdq99hp",
+	"isDesktopOnly": false
+}
