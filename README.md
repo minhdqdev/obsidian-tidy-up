@@ -4,7 +4,8 @@ This plugin helps you organize your [Obsidian]((https://obsidian.md)) vault by t
 
 ## Features
 - Automatically move images in the vault folder to a specified assets directory.
-
+- Trash image files that are not referenced in any notes.
+- Trash empty folders.
 
 
 ## Installation
@@ -32,7 +33,8 @@ Or you can also use the command palette (Cmd/Ctrl + P) and search for "Tidy up".
 
 ## Changelog
 - **v0.1.0**: Initial release with basic functionality to tidy up images.
-
+- **v0.2.0**: Added functionality to trash empty folders and images not referenced in notes.
 
 ## Known issues
 - This plugin has only been tested on Obsidian v1.8.10 on macOS. It may not work on other versions or platforms.
+- Folders containing hidden files (like `.env`) are considered empty folders and will be trashed.
